@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sebuah Surat Untukmu</title>
+    <style>
+
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap');
+
+        :root {
+
+            --envelope-width: 300px;
+            --envelope-height: 190px;
+            --primary-pink: #f7b3c1;
+            --secondary-pink: #f2a0af;
+            --paper-color: #fffaf8;
+            --text-color: #5c4742;
+            --heart-color: #ff4757;
+            --shadow-color: rgba(0, 0, 0, 0.15);
+            --romantic-font: 'Dancing Script', cursive;
+        }
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: var(--romantic-font), cursive;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        #background-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+
+        .wrapper {
+            position: relative;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            z-index: 1;
+        }
+
+        .envelope {
+            position: relative;
+            width: var(--envelope-width);
+            height: var(--envelope-height);
+            transition: transform 0.9s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .envelope-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: var(--primary-pink);
+            border-radius: 10px;
+            box-shadow: 0 4px 20px var(--shadow-color);
+            z-index: 1;
+        }
+
+        .envelope-front {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to top, var(--primary-pink) 50%, transparent 50%);
+            border-radius: 10px;
+            z-index: 2;
+        }
+
+        .letter {
+            position: absolute;
+            top: 5px;
+            left: 10px;
+            right: 10px;
+            bottom: 5px;
+            background: var(--paper-color);
+            border-radius: 8px;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.1) inset;
+            z-index: 3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            transition: transform 1s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 55%;
+            background-color: var(--secondary-pink);
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            transform-origin: top;
+            transition: transform 0.6s 0.2s ease-in-out;
+            z-index: 4;
+        }
+
+        .heart {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2.5rem;
+            color: var(--heart-color);
+            transition: opacity 0.4s ease;
+            z-index: 5;
+        }
+
+        #love-text {
+            font-size: clamp(1.5rem, 6.2vw, 1.8rem);
+            color: var(--text-color);
+            padding: 15px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 1.2s 0.2s ease, transform 1.2s 0.2s ease;
+        }
+
+        #love-text.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+
+        .wrapper.open .envelope-flap {
+            transform: rotateX(180deg);
+            z-index: 0;
+            transition-delay: 0s;
+        }
+
+        .wrapper.open .heart {
+            opacity: 0;
+        }
+
+        .wrapper.open .letter {
+            transform: translateY(-185px);
+        }
+
+        .wrapper.open .envelope {
+             transform: translateY(80px) scale(0.9);
+        }
+
+    </style>
+</head>
+<body>
+
+    <video id="background-video" autoplay loop muted playsinline>
+        <source src="https://cdn.pixabay.com/video/2022/02/09/107257-678130120_large.mp4" type="video/mp4">
+        Your browser does not support HTML5 video.
+    </video>
+
+    <div class="wrapper" id="envelopeWrapper">
+        <div class="envelope">
+            <div class="envelope-back"></div>
+            <div class="envelope-front"></div>
+            <div class="letter">
+                <h1 id="love-text"></h1>
+            </div>
+            <div class="envelope-flap"></div>
+            <div class="heart">💌</div>
+        </div>
+    </div>
+
+    <script>
+        const wrapper = document.getElementById('envelopeWrapper');
+        const textElement = document.getElementById('love-text');
+        let isOpen = false;
+
+        const lovePhrases = [
+            "❤️ hallo Rianti..❤️",
+            "🌹 Cuma mau bilang...🌹",
+            "I Love You sengkuuu..❤️"
+        ];
+        let currentIndex = 0;
+
+        function showNextPhrase() {
+            textElement.classList.remove('show');
+
+            setTimeout(() => {
+                currentIndex = (currentIndex + 1) % lovePhrases.length;
+                textElement.innerHTML = lovePhrases[(currentIndex) % lovePhrases.length];
+                textElement.classList.add('show');
+            }, 1200);
+        }
+
+        wrapper.addEventListener('click', () => {
+            if (isOpen) return;
+            isOpen = true;
+
+            wrapper.classList.add('open');
+
+            setTimeout(() => {
+                textElement.innerHTML = lovePhrases[(currentIndex) % lovePhrases.length];
+                textElement.classList.add('show');
+
+                if (lovePhrases.length > 1) {
+                    setInterval(showNextPhrase, 4000);
+                }
+            }, 1000);
+        });
+    </script>
+
+</body>
+</html>
